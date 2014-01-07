@@ -2,9 +2,15 @@ GEM
   remote: https://rubygems.org/
   specs:
     bindata (1.6.0)
+    coderay (1.1.0)
     ffi (1.9.3)
+    method_source (0.8.2)
     process_shared (0.1.10)
       ffi (~> 1.0)
+    pry (0.9.12.4)
+      coderay (~> 1.0)
+      method_source (~> 0.8)
+      slop (~> 3.4)
     slop (3.4.7)
 
 PLATFORMS
@@ -13,4 +19,5 @@ PLATFORMS
 DEPENDENCIES
   bindata (~> 1.6.0)
   process_shared (~> 0.1.7)
+  pry
   slop (~> 3.4.6)
