@@ -1,5 +1,7 @@
 require_relative '../../spolks_lib/network'
 require_relative '../../spolks_lib/file'
+require 'slop'
+require 'pry'
 
 opts = Slop.parse(help: true) do
   on :g, :host=, 'Hostname'
@@ -7,27 +9,32 @@ opts = Slop.parse(help: true) do
   on :f, :file=, 'Filename'
 end
 
-def udp_client(opts)
-  sent = true
+CHUNK_SIZE = 32768
+sent = true
+count = 0
 
-  Network::DatagramSocket.open opts do |socket|
-    XIO::XFile.read opts do |file, chunk|
-      2.times do
-        write, read = sent ? [true, false] : [false, true]
-        rs, ws, = socket.select rs: read, ws: write
-        break unless rs or ws
-
-        if ws
-          socket.send chunk
-          sent = false
-        end
-
+Network::DatagramSocket.open opts do |socket|
+  rs = nil
+  ws = nil
+  XIO::XFile.read opts do |file, chunk|
+    if chunk.size < CHUNK_SIZE
+      binding.pry
+    end
+    rs, ws, = socket.select ws: true
+    if ws
+      socket.send count.to_s + chunk
+      count = 0 if count == 9
+      count = count + 1
+      loop do
+        rs, ws, = socket.select rs: true
         if rs
-          msg, = socket.recv(3)
-          sent = true if msg == Network::ACK
+          msg, = socket.recv
+          break
+        else
+          socket.send chunk
         end
       end
     end
-    socket.send Network::FIN
   end
+  socket.send Network::FIN
 end
