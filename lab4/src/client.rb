@@ -33,7 +33,7 @@ if opts.file?
         begin
           sock.send chunk unless chunk.nil?
           if opts.verbose?
-          	sock.send_oob file.pos.to_s
+          	sock.send_oob
           end
         rescue
           File.open('offset', 'w+') do |file_offset|

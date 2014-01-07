@@ -17,6 +17,12 @@ opts = Slop.parse(help: true) do
   on :f, :file=, 'Filename'
 end
 
+def save_offset(file)
+  File.open('offset', 'w+') do |file_offset|
+    file_offset.write file.pos.to_s
+  end
+end
+
 if opts.file?
   Network::StreamSocket.open opts do |sock|
     _, ws, = sock.select ws: true
@@ -37,11 +43,14 @@ if opts.file?
         end
         begin
           sock.send chunk unless chunk.nil?
-        rescue
-          File.open('offset', 'w+') do |file_offset|
-            file_offset.write file.pos.to_s
-            exit
-          end
+        rescue Errno::ECONNRESET
+          save_offset(file)
+          puts "server send signal ECONNRESET"
+          exit
+        rescue Errno::EPIPE
+          save_offset(file)
+          puts "server send signal EPIPE"
+          exit
         end
       end
     end

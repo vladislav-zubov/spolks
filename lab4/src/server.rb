@@ -28,8 +28,8 @@ if opts.file?
             break
           end
           if es
-            chunk = client.recv_oob
-            puts chunk
+            client.recv_oob
+            puts file.pos.to_s
           end
           
           chunk = client.recv

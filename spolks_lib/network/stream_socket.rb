@@ -47,8 +47,7 @@ module Network
     end
 
     def send_oob(msg='i')
-      @socket.send(msg, Socket::MSG_OOB)
-      # sleep 1
+      @socket.send('!', Socket::MSG_OOB)
     end
 
     def recv(size=Constants::CHUNK_SIZE)
@@ -56,7 +55,7 @@ module Network
     end
 
     def recv_oob
-      @socket.recv(15 ,Socket::MSG_OOB)
+      @socket.recv(1, Socket::MSG_OOB)
     end
 
     def select(descr={}, timeout=Constants::TIMEOUT)
