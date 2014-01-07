@@ -9,6 +9,8 @@ opts = Slop.parse(help: true) do
   on :f, :file=, 'Filename'
 end
 
+prev_data = nil
+
 Network::DatagramSocket.listen opts do |socket|
   XIO::XFile.write opts do |file|
     loop do
@@ -18,7 +20,11 @@ Network::DatagramSocket.listen opts do |socket|
       data, who = socket.recv
       socket.send Network::ACK, who
       break if data.empty? or data == Network::FIN
-      file.write data
+      if prev_data && data[0] != prev_data[0]
+        data[0] = ''
+        file.write data
+      end
+      prev_data = data
     end
   end
 end

@@ -50,7 +50,7 @@ module Network
     end
 
     def recv(size=Constants::CHUNK_SIZE)
-      @socket.recvfrom(size)
+      @socket.recvfrom(size + 1)
     end
 
     def recv_nonblock(size=Constants::PACKET_SIZE)
