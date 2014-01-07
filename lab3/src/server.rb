@@ -26,7 +26,9 @@ if opts.file?
             break
           end
           chunk = client.recv
-          break if chunk.empty?
+          if chunk.empty?
+            client.close
+          end
           file.write chunk
         end
       end
