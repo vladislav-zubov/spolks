@@ -10,35 +10,34 @@ opts = Slop.parse(help: true) do
   on :f, :file=, 'Filename'
 end
 
-if opts.file?
-  Network::StreamServer.listen opts do |server|
-    loop do
-      client, = server.accept
-      Thread.new do
-        rs, = client.select rs: true
-        file_name = client.recv
-        puts file_name
+Network::StreamServer.listen opts do |server|
+  loop do
+    client, = server.accept
+    Thread.new do
+      rs, = client.select rs: true
+      file_name = client.recv
+      puts file_name
 
-        XIO::XFile.write( { file: file_name } ) do |file|
-          file.seek(0 ,IO::SEEK_END)
-          rs, ws = client.select ws: true
-          client.send file.pos.to_s
-          loop do
-            rs, _, es = client.select rs: true, es: true
+      XIO::XFile.write( { file: file_name } ) do |file|
+        file.seek(IO::SEEK_END)
+        rs, ws = client.select ws: true
+        binding.pry
+        client.send file.size.to_s
+        loop do
+          rs, _, es = client.select rs: true, es: true
 
-            unless rs or es
-              client.close
-              break
-            end
-            if es
-              client.recv_oob
-              puts file.pos.to_s
-            end
-            
-            chunk = client.recv
-            break if chunk.empty?
-            file.write chunk
+          unless rs or es
+            client.close
+            break
           end
+          if es
+            client.recv_oob
+            puts file.pos.to_s
+          end
+          
+          chunk = client.recv
+          break if chunk.empty?
+          file.write chunk
         end
       end
     end

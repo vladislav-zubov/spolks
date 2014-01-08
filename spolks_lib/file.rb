@@ -4,7 +4,7 @@ module XIO
   end
 
   class XFile
-    def initialize(filename, mode='r+')
+    def initialize(filename, mode='a+')
       @file = File.open(filename, mode)
     end
 
