@@ -33,6 +33,10 @@ module Network
       @socket
     end
 
+    def get_port
+      @socket.local_address.ip_port
+    end
+
     def bind
       @socket.bind(@sockaddr)
     end
@@ -47,6 +51,10 @@ module Network
       else
         @socket.send(string, 0)
       end
+    end
+
+    def send_nonblock(string)
+      @socket.write_nonblock(string)
     end
 
     def recv(size=Constants::CHUNK_SIZE)

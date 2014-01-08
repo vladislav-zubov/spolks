@@ -17,12 +17,14 @@ Network::DatagramSocket.listen opts do |socket|
     if !whos.include? who
       Thread.new do
         XIO::XFile.write opts do |file|
-          sock_client = Network::DatagramSocket.new(host: opts[:host], port: 12000)
+          sock_client = Network::DatagramSocket.new(host: opts[:host], port: 0)
           sock_client.bind
+          port = sock_client.get_port
+          packet_with_port = Network::Packet.new num_packet: 0,len: port.to_s.length, data: port.to_s, inf_or_data: 3
+          socket.send packet_with_port.to_binary_s, who
           prev_packet = nil
           packet = Network::Packet.new
           loop do
-            binding.pry
             rs, = sock_client.select rs: true
             break unless rs
             data, who = sock_client.recv_nonblock

@@ -23,7 +23,7 @@ Network::DatagramSocket.open opts do |socket|
     end
     rs, ws, = socket.select ws: true
     if ws
-      msg = Network::Packet.new num_packet: count,len: chunk.length, data: chunk
+      msg = Network::Packet.new num_packet: count,len: chunk.length, data: chunk, inf_or_data: 0
       socket.send msg.to_binary_s
       count = 0 if count == 9
       count = count + 1
