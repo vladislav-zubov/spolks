@@ -13,6 +13,7 @@ CHUNK_SIZE = 32768
 sent = true
 count = 0
 
+
 Network::DatagramSocket.open opts do |socket|
   rs = nil
   ws = nil
@@ -22,7 +23,8 @@ Network::DatagramSocket.open opts do |socket|
     end
     rs, ws, = socket.select ws: true
     if ws
-      socket.send count.to_s + chunk
+      msg = Network::Packet.new num_packet: count,len: chunk.length, data: chunk
+      socket.send msg.to_binary_s
       count = 0 if count == 9
       count = count + 1
       loop do
@@ -31,7 +33,7 @@ Network::DatagramSocket.open opts do |socket|
           msg, = socket.recv
           break
         else
-          socket.send chunk
+          socket.send msg.to_binary_s
         end
       end
     end
