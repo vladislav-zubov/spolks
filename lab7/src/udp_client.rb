@@ -13,14 +13,27 @@ CHUNK_SIZE = 32768
 sent = true
 count = 0
 
+port = nil
+
+packet = Network::Packet.new
 
 Network::DatagramSocket.open opts do |socket|
+  file_string = opts[:file] + " " + "0"
+  file_and_pos = Network::Packet.new num_packet: count,len: file_string.length, data: file_string, inf_or_data: 1
+  count = count + 1
+  socket.send file_and_pos.to_binary_s
   rs = nil
   ws = nil
+  rs, ws, = socket.select rs: true
+  port, = socket.recv
+  packet.read port
+  port = packet.data
+end
+
+puts port
+
+Network::DatagramSocket.open({ host: opts[:host], port: port }) do |socket|
   XIO::XFile.read opts do |file, chunk|
-    if chunk.size < CHUNK_SIZE
-      binding.pry
-    end
     rs, ws, = socket.select ws: true
     if ws
       msg = Network::Packet.new num_packet: count,len: chunk.length, data: chunk, inf_or_data: 0
@@ -40,3 +53,4 @@ Network::DatagramSocket.open opts do |socket|
   end
   socket.send Network::FIN
 end
+

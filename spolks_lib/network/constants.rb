@@ -8,6 +8,6 @@ module Network
     FIN = 'FIN'
     CHUNK_SIZE = 32768
     PACKET_SIZE = CHUNK_SIZE + 12
-    TIMEOUT = 10000
+    TIMEOUT = 2
   end
 end
