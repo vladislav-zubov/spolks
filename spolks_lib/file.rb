@@ -9,6 +9,7 @@ module XIO
     end
 
     def self.read(what, &block)
+      binding.pry
       file = XFile.new(what[:file], 'r+')
 
       loop do
