@@ -21,12 +21,10 @@ module Network
       socket.close if socket
     end
 
-    def self.listen(addrinfo, &block)
+    def self.listen(addrinfo)
       socket = DatagramSocket.new(port: addrinfo[:port], host: '')
       socket.bind
-      yield socket
-    ensure
-      socket.close if socket
+      socket
     end
 
     def fd

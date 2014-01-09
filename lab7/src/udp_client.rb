@@ -18,7 +18,7 @@ port = nil
 packet = Network::Packet.new
 
 Network::DatagramSocket.open opts do |socket|
-  file_string = opts[:file] + " " + "0"
+  file_string = opts[:file]
   file_and_pos = Network::Packet.new num_packet: count,len: file_string.length, data: file_string, inf_or_data: 1
   count = count + 1
   socket.send file_and_pos.to_binary_s
