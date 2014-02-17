@@ -5,7 +5,9 @@ module XIO
 
   class XFile
     def initialize(filename, mode='a+')
+      puts "def initialize(filename, mode='a+')"
       @file = File.open(filename, mode)
+      puts "@file = File.open(filename, mode)"
     end
 
     def self.read(what, &block)
@@ -22,7 +24,9 @@ module XIO
     end
 
     def self.write(what, &block)
+      puts "file  named" + what[:file]
       file = XFile.new(what[:file])
+      puts "file created"
       yield file
     ensure
       file.close if file
