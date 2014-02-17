@@ -19,11 +19,7 @@ pos = nil
 packet = Network::Packet.new
 
 Network::DatagramSocket.open opts do |socket|
-<<<<<<< Updated upstream
-  file_string = opts[:file]
-=======
   file_string = opts[:file].to_s
->>>>>>> Stashed changes
   file_and_pos = Network::Packet.new num_packet: count,len: file_string.length, data: file_string, inf_or_data: 1
   count = count + 1
   socket.send file_and_pos.to_binary_s
@@ -39,14 +35,9 @@ Network::DatagramSocket.open opts do |socket|
   port = packet.data
 end
 
-puts "port =" + port
-puts "pos = " + pos
-
 Network::DatagramSocket.open({ host: opts[:host], port: port }) do |socket|
   File.open(opts[:file], 'r') do |file|
-    puts "file opened"
     if file.seek(pos.to_i) < 0
-      puts "exit"
       exit
     end
     loop do

@@ -18,9 +18,6 @@ Network::DatagramSocket.open opts do |socket|
   rs = nil
   ws = nil
   XIO::XFile.read opts do |file, chunk|
-    if chunk.size < CHUNK_SIZE
-      binding.pry
-    end
     rs, ws, = socket.select ws: true
     if ws
       msg = Network::Packet.new num_packet: count,len: chunk.length, data: chunk

@@ -15,7 +15,6 @@ if opts.file?
       client, = server.accept
       rs, = client.select rs: true
       offset = client.recv
-      puts offset
 
       XIO::XFile.write opts do |file|
         file.seek(offset.to_i)

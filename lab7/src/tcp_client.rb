@@ -16,13 +16,12 @@ Network::StreamSocket.open opts do |sock|
   _, ws, = sock.select ws: true
   sock.send opts[:file]
   rs, ws, = sock.select rs: true
-  offset = sock.recv 
-  puts offset
+  offset = sock.recv
   File.open(opts[:file], 'r') do |file|
     file.seek(offset.to_i)
-    loop do 
+    loop do
       chunk = file.read CHUNK_SIZE
-      
+
       if chunk.nil?
         File.open( 'offset', 'w' ) { |file| file.truncate(0) }
         break

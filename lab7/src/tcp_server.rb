@@ -2,39 +2,6 @@ require 'pry'
 require_relative '../../spolks_lib/network/'
 require_relative '../../spolks_lib/file'
 
-# Network::StreamServer.listen opts do |server|
-#   loop do
-#     client, = server.accept
-#     Thread.new do
-#       rs, = client.select rs: true
-#       file_name = client.recv
-#       puts file_name
-
-#       XIO::XFile.write( { file: file_name } ) do |file|
-#         file.seek(IO::SEEK_END)
-#         rs, ws = client.select ws: true
-#         client.send file.size.to_s
-#         loop do
-#           rs, _, es = client.select rs: true, es: true
-
-#           unless rs or es
-#             client.close
-#             break
-#           end
-#           if es
-#             client.recv_oob
-#             puts file.pos.to_s
-#           end
-          
-#           chunk = client.recv
-#           break if chunk.empty?
-#           file.write chunk
-#         end
-#       end
-#     end
-#   end
-# end
-
 class TcpServer
 
   def listen(opts)
@@ -46,7 +13,6 @@ class TcpServer
 
   def connected_user
     client, = @socket.accept
-    binding.pry
     new_thread(client)
   end
 
@@ -54,40 +20,33 @@ class TcpServer
 
     def new_thread(client)
       Thread.new do
-        puts "start thread"
         recieve_file(client)
-        puts "end thread"
       end
     end
 
     def recieve_file(client)
       rs, = client.select rs: true
       file_name = client.recv
-      puts file_name
 
       XIO::XFile.write( { file: file_name } ) do |file|
         file.seek(IO::SEEK_END)
         rs, ws = client.select ws: true
         client.send file.size.to_s
-        puts "send pos"
         loop do
           rs, _, es = client.select rs: true, es: true
 
           unless rs or es
-            puts "client close"
             client.close
             break
           end
           if es
             client.recv_oob
-            puts file.pos.to_s
           end
-          
+
           chunk = client.recv
           break if chunk.empty?
-          puts "file write"
           file.write chunk
         end
       end
     end
-end 
+end

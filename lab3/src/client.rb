@@ -34,9 +34,9 @@ if opts.file?
     end
     File.open(opts[:file], 'r') do |file|
       file.seek(offset.to_i)
-      loop do 
+      loop do
         chunk = file.read CHUNK_SIZE
-        
+
         if chunk.nil?
           File.open( 'offset', 'w' ) { |file| file.truncate(0) }
           break
@@ -45,16 +45,12 @@ if opts.file?
           sock.send chunk unless chunk.nil?
         rescue Errno::ECONNRESET
           save_offset(file)
-          puts "server send signal ECONNRESET"
           exit
         rescue Errno::EPIPE
           save_offset(file)
-          puts "server send signal EPIPE"
           exit
         end
       end
     end
   end
-else
-  puts opts
 end

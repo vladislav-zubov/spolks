@@ -23,9 +23,9 @@ if opts.file?
     end
     File.open(opts[:file], 'r') do |file|
       file.seek(offset.to_i)
-      loop do 
+      loop do
         chunk = file.read CHUNK_SIZE
-        
+
         if chunk.nil?
           File.open( 'offset', 'w' ) { |file| file.truncate(0) }
           break

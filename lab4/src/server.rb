@@ -16,7 +16,6 @@ if opts.file?
       client, = server.accept
       rs, = client.select rs: true
       offset = client.recv
-      puts offset
 
       XIO::XFile.write opts do |file|
         file.seek(offset.to_i)
@@ -29,9 +28,8 @@ if opts.file?
           end
           if es
             client.recv_oob
-            puts file.pos.to_s
           end
-          
+
           chunk = client.recv
           break if chunk.empty?
           file.write chunk
