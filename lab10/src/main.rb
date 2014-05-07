@@ -12,7 +12,8 @@ UDPSock.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
 thread_recieve = Thread.new do
   loop do
     data, addr = UDPSock.recvfrom(1024)
-    puts "From addr: '%s', msg: '%s'" % [addr[2], data]
+    UDPSock.send('ping echo', 0, addr[2], addr[1]) if data === "ping\n"
+    puts "From addr: %s, msg: %s" % [addr[2], data]
   end
 end
 
